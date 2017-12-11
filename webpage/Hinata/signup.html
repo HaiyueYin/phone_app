@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+     <link href="./css/asset/bootstrap.min.css" rel="stylesheet">
+     <link href="./css/asset/signin.css" rel="stylesheet">
+
+</head>
+
+<body>
+
+<div class="container">
+    <form class="form-signin">
+    <h2 class="form-signin-heading">Please Sign Up</h2>
+    <label for="inputEmail" class="sr-only">Email address</label>
+    <input type="email" id="inputEmail" class="form-control" placeholder="Email address" required autofocus>
+
+    <label for="username" class="sr-only" >UserId</label>
+    <input class="form-control" id="userId_signup" type="text" placeholder="UserName" required="" autofocus="">
+
+    <label for="password" class="sr-only">Password</label>
+    <input class="form-control" id="password_signup" type="password" placeholder="Password" required="" autofocus="">
+
+
+    <label for="password_cfm" class="sr-only">Confirm Password</label>
+    <input class="form-control" id="cfm_password_signup" type="password" placeholder="Confirm Password" required="" autofocus="">
+
+    <button class="btn btn-lg btn-primary btn-block" id="signup_btn" type="button">sign up</button>
+    <button class="btn btn-lg btn-primary btn-block" id="cancel_btn" type="button">Cancel</button>
+    </form>
+</div>
+
+
+
+
+
+<script src="https://www.gstatic.com/firebasejs/4.6.0/firebase.js"></script>
+<script>
+    // Initialize Firebase
+    var config = {
+        apiKey: "AIzaSyACsDAUeirU-gel9iB2tXzYMBUoskBkDog",
+        authDomain: "oct13am-7683b.firebaseapp.com",
+        databaseURL: "https://oct13am-7683b.firebaseio.com",
+        projectId: "oct13am-7683b",
+        storageBucket: "oct13am-7683b.appspot.com",
+        messagingSenderId: "329352361598"
+    };
+    firebase.initializeApp(config);
+
+    var sign_up_id = document.getElementById("userId_signup");
+    var pwd = document.getElementById("password_signup");
+    var cfm_pwd = document.getElementById("cfm_password_signup");
+    var samepwd = Boolean(false);
+    var sameID = Boolean(false);
+
+    cancel_btn.addEventListener("click",function(){
+        window.location.href = 'signin.html';
+    });
+
+    signup_btn.addEventListener("click",function(){
+        //console.log(sign_up_id.value);
+
+        var databaseRef = firebase.database().ref('/User_profile/').on('value' ,function (snapchat) {
+            var preuser = Object.keys(snapchat.val());
+            //console.log(preuser)
+            for (var iterator in preuser){
+                //console.log(preuser[iterator]);
+                if (preuser[iterator] == sign_up_id.value)
+                    sameID = true;
+            }
+            if (pwd.value == cfm_pwd.value){
+                samepwd = Boolean(true);
+            }
+            if (sameID == false && samepwd == true){
+                var username = sign_up_id.value, password = pwd.value;
+                console.log(username + password);
+                var addref = firebase.database().ref('User_profile/' + username).set({
+                    user_pwd : password
+
+                });
+                var addref2 = firebase.database().ref('User_profile/' + username + '/Time_mode/puzzle_going_id/').set({
+                    puzzle_piece_id : '1',
+                    puzle_piece_ongoing_id : '0'
+                });
+                alert("Sign Up Successfully");
+                window.location.href='signin.html';
+
+
+            }
+            else{
+                alert("Improper Sign Up information");
+            }
+        });
+
+
+
+
+
+    })
+
+</script>
+
+
+
+</body>
+</html>

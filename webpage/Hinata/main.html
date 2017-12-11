@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<!-- saved from url=(0060)https://v4-alpha.getbootstrap.com/examples/narrow-jumbotron/ -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    
+
+    <title>Main</title>
+
+    <link href="./css/asset/bootstrap.min.css" rel="stylesheet">
+    <link href="./css/asset/narrow-jumbotron.css" rel="stylesheet">
+  </head>
+
+  <body>
+
+    <div class="container">
+      <div class="header clearfix">
+        <nav>
+          <ul class="nav nav-pills float-right">
+            <li class="nav-item">
+              <a class="nav-link active" href="signin.html">Sign Out<span class="sr-only">(current)</span></a>
+            </li>
+          </ul>
+        </nav>
+        <h3 class="text-muted">Ants</h3>
+      </div>
+
+      <div class="jumbotron">
+        <h1 class="display-3">Your Task</h1>
+        <p class="lead">Time and tide wait for no man. I should value my time.</p>
+        <p><a class="btn btn-lg btn-primary text-white" role="button" id="add_task">Add new Task</a></p>
+      </div>
+
+      <div class="row marketing">
+        <div class="col-lg-6">
+          <table id="taskTable_name" class="table forum table-striped" style="width: 700px">
+              <thead>
+              <tr>
+                  <th>   Finish</th>
+                  <th>Task Name</th>
+                  <th>Due Date </th>
+                  <th>Top</th>
+              </tr>
+              </thead>
+              <tbody id="taskDetail"></tbody>
+
+          </table>
+        </div>
+      </div>
+
+      <footer class="footer">
+        <p>© Company 2017</p>
+      </footer>
+
+    </div> <!-- /container -->
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <!--<script src="./Narrow Jumbotron Template for Bootstrap_files/ie10-viewport-bug-workaround.js"></script>-->
+    <script src="https://www.gstatic.com/firebasejs/4.6.0/firebase.js"></script>
+    <script>
+        // Initialize Firebase
+        var config = {
+            apiKey: "AIzaSyACsDAUeirU-gel9iB2tXzYMBUoskBkDog",
+            authDomain: "oct13am-7683b.firebaseapp.com",
+            databaseURL: "https://oct13am-7683b.firebaseio.com",
+            projectId: "oct13am-7683b",
+            storageBucket: "oct13am-7683b.appspot.com",
+            messagingSenderId: "329352361598"
+        };
+        firebase.initializeApp(config);
+
+        add_task.addEventListener("click",function(){
+            window.location.href = 'addtask.html';
+        });
+
+        var usr_id = localStorage.getItem("usr_id");
+  
+        
+        var ref1 = firebase.database().ref('/User_profile/' + usr_id+'/Task');     
+        
+        ref1.orderByChild("due_date").on("child_added", function(data) {
+            console.log(data.key);
+            console.log(data.val().due_date);
+            var task=data.key;    
+            var date=data.val().due_date;
+            
+            addRow(task, date);
+            /*for (var it in task_data){
+                var task = it;
+                var date = task_data[it]["due_date"];
+                var top = task_data[it]["top"];
+                var note = task_data[it]["remind_time"];
+                addRow(task, date);
+            }*/
+            
+        });        
+      
+        
+        /*var myref = firebase.database().ref('/User_profile/' + usr_id + '/Task/').on('value',function (snapchat) {
+            var task_data = snapchat.val();
+             console.log(task_data);
+            for (var it in task_data){
+                var task = it;
+                var date = task_data[it]["due_date"];
+                var top = task_data[it]["top"];
+                var note = task_data[it]["remind_time"];
+//                console.log(task);
+//                console.log(date);
+                addRow(task, date);
+            }
+
+
+        });*/
+
+        function addRow( task,  date) {
+            var table = document.getElementById("taskDetail");
+            
+            var rowCount = table.rows.length;
+            
+            var row = table.insertRow(rowCount);
+            var cell1 = row.insertCell(0);
+            var cell2 = row.insertCell(1);
+            var cell3 = row.insertCell(2);
+            var cell4 = row.insertCell(3);
+            cell1.innerHTML = '<button id="finish_btn" class="btn btn-primary" type="button" onclick="deleteRow(this)">Finished</button>'; 
+            cell2.innerHTML = task;
+            cell3.innerHTML = date;
+            cell4.innerHTML = '<button id="top_btn" class="btn btn-primary" type="button" onclick="moveToTop(this)">Top</button>'; 
+        }       
+                
+        function deleteRow(elem) {
+            var table = elem.parentNode.parentNode.parentNode;
+            //var rowCount = table.rows.length;            
+
+            // get the "<tr>" that is the parent of the clicked button
+            var row = elem.parentNode.parentNode;
+             //alert("row" + elem.parentNode.parentNode.rowIndex + 
+    //" - column" + elem.parentNode.cellIndex);
+            var i=elem.parentNode.parentNode.rowIndex;
+            var j=elem.parentNode.cellIndex;            
+            
+            console.log(table.rows[i-1].cells[j+1].innerText);
+            
+            var taskName=table.rows[i-1].cells[j+1].innerText;          
+                        
+            var myref = firebase.database().ref('/User_profile/' + usr_id + '/Task/' + taskName).remove();                    
+            
+            row.parentNode.removeChild(row); // remove the row         
+        }
+      
+        function moveToTop(elem){
+            var row=elem.parentNode.parentNode;
+            
+            row.parentNode.insertBefore(row, row.parentNode.childNodes[0]);            
+        }
+       
+     
+
+    </script>
+  
+
+</body></html>

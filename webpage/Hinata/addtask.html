@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="./css/asset/bootstrap.min.css" rel="stylesheet">
+    <link href="./css/asset/signin.css" rel="stylesheet">
+    <title>Task Setting</title>
+</head>
+
+<body>
+
+<div class="container">
+   <form class="form-signin">
+    <h2 class="form-signin-heading">Task Setting</h2>
+
+    <label for="task" class="sr-only">TaskName</label>
+    <input class="form-control" style="margin-top: 20px" id="Task_name" type="text" placeholder="Task Name" required="" autofocus="">
+
+    <label class="sr-only">Due Date</label>
+    <input class="form-control" style="margin-top: 20px" id="taskDate" type="text" placeholder="Due Date" required="" autofocus="">
+
+    <label class="sr-only">Remind Time</label>
+    <input class="form-control" style="margin-top: 20px" type="text" id="remindTime" placeholder="Remind Time" required="" autofocus="">
+
+    <label class="sr-only">Note</label>
+    <textarea class="form-control" style="margin-top: 20px" rows="3" id="tasknote" type="text" placeholder="Note" required="" autofocus=""></textarea>
+
+    <button  style="margin-top: 20px" class="btn btn-lg btn-primary btn-block" id="confirm_task_btn" type="button">Confirm</button>
+    <button  style="margin-top: 20px" class="btn btn-lg btn-primary btn-block" onclick="location.href = 'main.html'" id="cancel_task_btn" type="button">Cancel</button>
+    </form>
+</div>
+
+
+<script src="./laydate/laydate.js"></script>
+<script>
+    laydate.render({
+        elem: '#taskDate'
+        ,lang: 'en'
+    });
+    laydate.render({
+        elem: '#remindTime'
+        ,lang: 'en'
+        ,type: 'time'
+    })
+</script>
+
+<script src="https://www.gstatic.com/firebasejs/4.6.0/firebase.js"></script>
+<script>
+    // Initialize Firebase
+    var config = {
+        apiKey: "AIzaSyACsDAUeirU-gel9iB2tXzYMBUoskBkDog",
+        authDomain: "oct13am-7683b.firebaseapp.com",
+        databaseURL: "https://oct13am-7683b.firebaseio.com",
+        projectId: "oct13am-7683b",
+        storageBucket: "oct13am-7683b.appspot.com",
+        messagingSenderId: "329352361598"
+    };
+    firebase.initializeApp(config);
+    var taskname = document.getElementById("Task_name");
+    var duedate = document.getElementById("taskDate");
+    var remindTime = document.getElementById("remindTime");
+    var tasknote = document.getElementById("tasknote");
+
+    confirm_task_btn.addEventListener("click",function(){
+        var name = taskname.value;
+        var date = duedate.value;
+        var time = remindTime.value;
+        var note = tasknote.value;
+        var usr_id = localStorage.getItem("usr_id");
+        var success = Boolean(false);
+        if (name !== "" && date !== "" && time !== "") {
+
+            var addTask = firebase.database().ref('User_profile/' + usr_id + '/Task/' + name).set({
+                due_date: date,
+                remind_time: time,
+                note: note,
+                top: "false"
+            });
+            success = true;
+            console.log(success);
+//            window.location.href = 'main.html';
+
+        }
+//        if (success == true){
+//            window.location.href = 'main.html';
+//        }
+
+    });
+
+
+</script>
+
+</body>
+</html>
